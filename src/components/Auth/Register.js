@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import firebase from "../../firebase";
 import {
   Grid,
   Form,
@@ -17,11 +18,31 @@ const Register = () => {
     password: "",
     passwordConfirmation: "",
   });
+  const [error, setError] = useState(null);
+
+  const { username, email, password, passwordConfirmation } = state;
+
   const handleChange = (e) => {
     setState({
       ...state,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const createdUser = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(state.email, state.password);
+      console.log(createdUser);
+    } catch (err) {
+      console.log(err);
+      setError(null);
+      setError(err.message);
+    }
   };
 
   return (
@@ -31,11 +52,13 @@ const Register = () => {
           <Icon name="puzzle piece" color="blue" />
           Register for Slacklone
         </Header>
-        <Form>
+        {error && <Message color="red">{error}</Message>}
+        <Form onSubmit={handleSubmit}>
           <Segment stacked>
             <Form.Input
               fluid
               name="username"
+              value={username}
               icon="user"
               iconPosition="left"
               placeholder="Username"
@@ -45,6 +68,7 @@ const Register = () => {
             <Form.Input
               fluid
               name="email"
+              value={email}
               icon="mail"
               iconPosition="left"
               placeholder="Email"
@@ -54,6 +78,7 @@ const Register = () => {
             <Form.Input
               fluid
               name="password"
+              value={password}
               icon="lock"
               iconPosition="left"
               placeholder="Password"
@@ -63,6 +88,7 @@ const Register = () => {
             <Form.Input
               fluid
               name="passwordConfirmation"
+              value={passwordConfirmation}
               icon="repeat"
               iconPosition="left"
               placeholder="Password Confirmation"
