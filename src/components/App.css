@@ -1,0 +1,13 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+.app {
+  background: #eee;
+  padding: 1em;
+  height: 100vh;
+}
