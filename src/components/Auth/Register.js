@@ -19,8 +19,36 @@ const Register = () => {
     passwordConfirmation: "",
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { username, email, password, passwordConfirmation } = state;
+
+  const isFormValid = () => {
+    if (!isFormFilled()) {
+      setError("Fill all credentials...");
+      return false;
+    } else if (!isPasswordValid()) {
+      setError("Passwords is not matched or must be between 6-15 characters!");
+      return false;
+    } else return true;
+  };
+
+  const isFormFilled = () => {
+    return (
+      username.length &&
+      email.length &&
+      password.length &&
+      passwordConfirmation.length
+    );
+  };
+
+  const isPasswordValid = () => {
+    return (
+      password.length > 5 &&
+      password.length < 15 &&
+      password === passwordConfirmation
+    );
+  };
 
   const handleChange = (e) => {
     setState({
@@ -31,18 +59,21 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError(null);
 
-    try {
-      const createdUser = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(state.email, state.password);
-      console.log(createdUser);
-    } catch (err) {
-      console.log(err);
-      setError(null);
-      setError(err.message);
+    if (isFormValid()) {
+      try {
+        const createdUser = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(state.email, state.password);
+        console.log(createdUser);
+      } catch (err) {
+        console.log(err);
+        setError(err.message);
+      }
     }
+    setLoading(false);
   };
 
   return (
@@ -52,11 +83,14 @@ const Register = () => {
           <Icon name="puzzle piece" color="blue" />
           Register for Slacklone
         </Header>
-        {error && <Message color="red">{error}</Message>}
+        <Message color="red" hidden={!error}>
+          {error}
+        </Message>
         <Form onSubmit={handleSubmit}>
           <Segment stacked>
             <Form.Input
               fluid
+              className={error && error.includes("all") ? "error" : ""}
               name="username"
               value={username}
               icon="user"
@@ -67,6 +101,11 @@ const Register = () => {
             />
             <Form.Input
               fluid
+              className={
+                error && (error.includes("email") || error.includes("all"))
+                  ? "error"
+                  : ""
+              }
               name="email"
               value={email}
               icon="mail"
@@ -77,6 +116,13 @@ const Register = () => {
             />
             <Form.Input
               fluid
+              className={
+                error &&
+                (error.toLowerCase().includes("password") ||
+                  error.includes("all"))
+                  ? "error"
+                  : ""
+              }
               name="password"
               value={password}
               icon="lock"
@@ -87,6 +133,13 @@ const Register = () => {
             />
             <Form.Input
               fluid
+              className={
+                error &&
+                (error.toLowerCase().includes("password") ||
+                  error.includes("all"))
+                  ? "error"
+                  : ""
+              }
               name="passwordConfirmation"
               value={passwordConfirmation}
               icon="repeat"
@@ -95,7 +148,13 @@ const Register = () => {
               type="password"
               onChange={handleChange}
             />
-            <Button color="blue" fluid size="large">
+            <Button
+              className={loading ? "loading" : ""}
+              color="blue"
+              fluid
+              size="large"
+              disabled={loading}
+            >
               Submit
             </Button>
           </Segment>
