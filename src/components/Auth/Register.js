@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import firebase from "../../firebase";
+import md5 from "md5";
 import {
   Grid,
   Form,
@@ -20,6 +21,7 @@ const Register = () => {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [usersRef] = useState(firebase.database().ref("users"));
 
   const { username, email, password, passwordConfirmation } = state;
 
@@ -67,13 +69,28 @@ const Register = () => {
         const createdUser = await firebase
           .auth()
           .createUserWithEmailAndPassword(state.email, state.password);
-        console.log(createdUser);
+        await createdUser.user.updateProfile({
+          displayName: username,
+          photoURL: `http://gravatar.com/avatar/${md5(
+            createdUser.user.email
+          )}?=identicon`,
+        });
+        await saveUser(createdUser);
+        console.log("user saved to db");
       } catch (err) {
         console.log(err);
         setError(err.message);
       }
     }
     setLoading(false);
+  };
+
+  // firestore DB
+  const saveUser = ({ user }) => {
+    return usersRef.child(user.uid).set({
+      name: user.displayName,
+      avatar: user.photoURL,
+    });
   };
 
   return (
