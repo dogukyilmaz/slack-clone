@@ -13,6 +13,7 @@ import {
 import { Link } from "react-router-dom";
 
 const Register = () => {
+  // TODO: refactor form validation and form error ui
   const [state, setState] = useState({
     username: "",
     email: "",
@@ -76,7 +77,6 @@ const Register = () => {
           )}?=identicon`,
         });
         await saveUser(createdUser);
-        console.log("user saved to db");
       } catch (err) {
         console.log(err);
         setError(err.message);
