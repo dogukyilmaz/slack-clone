@@ -15,7 +15,7 @@ import firebase from "./firebase";
 // Redux
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
-import { setUser } from "./redux/actions";
+import { setUser, clearUser } from "./redux/actions";
 
 import "./App.css";
 
@@ -25,12 +25,14 @@ const Root = (props) => {
   } = store.getState();
 
   useEffect(() => {
-    console.log("useeffect");
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // console.log(user);
         store.dispatch(setUser(user));
         props.history.push("/");
+      } else {
+        store.dispatch(clearUser());
+        props.history.push("/login");
       }
     });
   }, [props.history]);
