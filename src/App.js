@@ -6,23 +6,38 @@ import {
   withRouter,
 } from "react-router-dom";
 
+import Landing from "./components/Landing";
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
+import Spinner from "./components/Spinner";
 import firebase from "./firebase";
 
+// Redux
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import { setUser } from "./redux/actions";
+
 import "./App.css";
-import Landing from "./components/Landing";
 
 const Root = (props) => {
+  const {
+    user: { isLoading },
+  } = store.getState();
+
   useEffect(() => {
+    console.log("useeffect");
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        // console.log(user);
+        store.dispatch(setUser(user));
         props.history.push("/");
       }
     });
-  }, []);
+  }, [props.history]);
 
-  return (
+  return isLoading ? (
+    <Spinner />
+  ) : (
     <Switch>
       <Route exact path="/" component={Landing} />
       <Route path="/login" component={Login} />
@@ -35,9 +50,11 @@ const RootWithAuth = withRouter(Root);
 
 const App = () => {
   return (
-    <Router>
-      <RootWithAuth />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <RootWithAuth />
+      </Router>
+    </Provider>
   );
 };
 
