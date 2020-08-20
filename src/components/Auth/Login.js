@@ -36,7 +36,6 @@ const Login = () => {
         const user = await firebase
           .auth()
           .signInWithEmailAndPassword(email, password);
-        console.log(user);
       } catch (err) {
         console.log(err);
         setError(err.message);
