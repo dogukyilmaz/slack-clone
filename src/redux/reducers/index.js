@@ -10,7 +10,7 @@ export const userReducer = (state = initialState, action) => {
   switch (type) {
     case actionTypes.SET_USER:
       return {
-        currentUser: payload.currentUser,
+        currentUser: payload,
         isLoading: false,
       };
 
