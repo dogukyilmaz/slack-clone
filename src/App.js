@@ -25,7 +25,7 @@ const Root = ({ history }) => {
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // store.dispatch(setUser(user));
+        store.dispatch(setUser(user));
         history.push("/");
       } else {
         store.dispatch(clearUser());

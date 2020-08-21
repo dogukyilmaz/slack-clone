@@ -11,10 +11,8 @@ import {
   Icon,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { setUser } from "../../redux/actions";
 
-const Register = ({ setUser }) => {
+const Register = () => {
   // TODO: refactor form validation and form error ui
   const [state, setState] = useState({
     username: "",
@@ -79,8 +77,6 @@ const Register = ({ setUser }) => {
           )}?=identicon`,
         });
         await saveUser(createdUser);
-        // set global state
-        setUser(createdUser.user);
       } catch (err) {
         console.log(err);
         setError(err.message);
@@ -188,4 +184,4 @@ const Register = ({ setUser }) => {
   );
 };
 
-export default connect(null, { setUser })(Register);
+export default Register;

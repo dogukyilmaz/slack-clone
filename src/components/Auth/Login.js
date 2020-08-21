@@ -10,10 +10,8 @@ import {
   Icon,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { setUser } from "../../redux/actions";
 
-const Login = ({ setUser }) => {
+const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
@@ -34,11 +32,7 @@ const Login = ({ setUser }) => {
 
     if (isFormValid()) {
       try {
-        const userRes = await firebase
-          .auth()
-          .signInWithEmailAndPassword(email, password);
-        // set global state
-        setUser(userRes.user);
+        await firebase.auth().signInWithEmailAndPassword(email, password);
       } catch (err) {
         console.log(err);
         setError(err.message);
@@ -101,4 +95,4 @@ const Login = ({ setUser }) => {
   );
 };
 
-export default connect(null, { setUser })(Login);
+export default Login;
