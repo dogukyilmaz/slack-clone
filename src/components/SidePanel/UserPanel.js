@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
+import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { clearUser } from "../../redux/actions";
 import PropTypes from "prop-types";
@@ -49,6 +49,11 @@ const UserPanel = ({ user }) => {
             <Dropdown
               trigger={
                 <span>
+                  <Image
+                    src={user && user.photoURL && user.photoURL}
+                    spaced="right"
+                    avatar
+                  />
                   {user && user.displayName ? user.displayName : "User"}
                 </span>
               }
