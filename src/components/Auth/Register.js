@@ -11,8 +11,10 @@ import {
   Icon,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { setUser } from "../../redux/actions";
 
-const Register = () => {
+const Register = ({ setUser }) => {
   // TODO: refactor form validation and form error ui
   const [state, setState] = useState({
     username: "",
@@ -77,6 +79,8 @@ const Register = () => {
           )}?=identicon`,
         });
         await saveUser(createdUser);
+        // set global state
+        setUser(createdUser.user);
       } catch (err) {
         console.log(err);
         setError(err.message);
@@ -86,8 +90,8 @@ const Register = () => {
   };
 
   // firestore DB
-  const saveUser = ({ user }) => {
-    return usersRef.child(user.uid).set({
+  const saveUser = async ({ user }) => {
+    return await usersRef.child(user.uid).set({
       name: user.displayName,
       avatar: user.photoURL,
     });
@@ -184,4 +188,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default connect(null, { setUser })(Register);

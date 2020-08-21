@@ -19,23 +19,20 @@ import { setUser, clearUser } from "./redux/actions";
 
 import "./App.css";
 
-const Root = (props) => {
-  const {
-    user: { isLoading },
-  } = store.getState();
+const Root = ({ history }) => {
+  const { isLoading } = store.getState().user;
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // console.log(user);
-        store.dispatch(setUser(user));
-        props.history.push("/");
+        // store.dispatch(setUser(user));
+        history.push("/");
       } else {
         store.dispatch(clearUser());
-        props.history.push("/login");
+        history.push("/login");
       }
     });
-  }, [props.history]);
+  }, [history]);
 
   return isLoading ? (
     <Spinner />

@@ -2,10 +2,10 @@ import React from "react";
 import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { clearUser } from "../../redux/actions";
-
+import PropTypes from "prop-types";
 import firebase from "../../firebase";
 
-const UserPanel = ({ user, isLoading, clearUser }) => {
+const UserPanel = ({ user }) => {
   const dropdownOptions = () => [
     {
       key: "user",
@@ -13,9 +13,7 @@ const UserPanel = ({ user, isLoading, clearUser }) => {
         <span>
           Signed in as{" "}
           <strong>
-            {!isLoading && user.currentUser && user.currentUser.displayName
-              ? user.currentUser.displayName
-              : "User"}
+            {user && user.displayName ? user.displayName : "User"}
           </strong>
         </span>
       ),
@@ -33,9 +31,6 @@ const UserPanel = ({ user, isLoading, clearUser }) => {
 
   const handleLogout = async () => {
     await firebase.auth().signOut();
-    // Clear global user state
-    // clearUser();
-    console.log("signed out");
   };
 
   return (
@@ -54,11 +49,7 @@ const UserPanel = ({ user, isLoading, clearUser }) => {
             <Dropdown
               trigger={
                 <span>
-                  {!isLoading &&
-                  user.currentUser &&
-                  user.currentUser.displayName
-                    ? user.currentUser.displayName
-                    : "User"}
+                  {user && user.displayName ? user.displayName : "User"}
                 </span>
               }
               options={dropdownOptions()}
@@ -70,8 +61,12 @@ const UserPanel = ({ user, isLoading, clearUser }) => {
   );
 };
 
+UserPanel.propTypes = {
+  user: PropTypes.object,
+};
+
 const mapStateToProps = (state) => ({
-  user: state.user,
+  user: state.user.currentUser,
 });
 
 export default connect(mapStateToProps, { clearUser })(UserPanel);
