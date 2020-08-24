@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import firebase from "../../firebase";
 import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
 
@@ -11,6 +11,22 @@ const Channels = ({ user }) => {
   const [channelName, setChannelName] = useState("");
   const [channelDetail, setChannelDetail] = useState("");
   const [channelsRef] = useState(firebase.database().ref("channels"));
+
+  const addListenerss = useCallback(() => {
+    channelsRef.on("child_added", (snap) => {
+      setChannels((chs) => [snap.val(), ...chs]);
+    });
+  }, [channelsRef]);
+
+  useEffect(() => {
+    addListenerss();
+  }, [addListenerss]);
+
+  // const addListeners = () => {
+  //   channelsRef.on("child_added", (snap) => {
+  //     setChannels((chs) => [snap.val(), ...chs]);
+  //   });
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,6 +72,19 @@ const Channels = ({ user }) => {
           ({channels.length}){" "}
           <Icon name="add" className="button" onClick={() => setModal(true)} />
         </Menu.Item>
+
+        {/* Channel List */}
+        {channels.length > 0 &&
+          channels.map((ch) => (
+            <Menu.Item
+              key={ch.id}
+              onClick={() => console.log(ch)}
+              name={ch.Name}
+              style={{ opacitiy: 0.7 }}
+            >
+              # {ch.name}
+            </Menu.Item>
+          ))}
       </Menu.Menu>
 
       <Modal
