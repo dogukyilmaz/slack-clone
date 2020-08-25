@@ -20,14 +20,26 @@ const Channels = ({
 
   const addListenerss = useCallback(() => {
     channelsRef.on("child_added", (snap) => {
-      setChannels((chs) => [snap.val(), ...chs]);
+      setChannels((chs) => [...chs, snap.val()]);
     });
   }, [channelsRef]);
+
+  const setFirstChannelOnFirstLoad = useCallback(() => {
+    if (channels.length > 0) {
+      setCurrentChannel(channels[0]);
+    }
+  }, [setCurrentChannel, channels]);
 
   useEffect(() => {
     addListenerss();
   }, [addListenerss]);
 
+  // FIXME: performance issue/dispatch setCurrentChannel action multiple
+  useEffect(() => {
+    setFirstChannelOnFirstLoad();
+  }, [channels, setFirstChannelOnFirstLoad]);
+
+  // console.log(channels);
   // const addListeners = () => {
   //   channelsRef.on("child_added", (snap) => {
   //     setChannels((chs) => [snap.val(), ...chs]);
