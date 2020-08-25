@@ -4,8 +4,14 @@ import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
 
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { setCurrentChannel, clearCurrentChannel } from "../../redux/actions";
 
-const Channels = ({ user }) => {
+const Channels = ({
+  user,
+  channel,
+  setCurrentChannel,
+  clearCurrentChannel,
+}) => {
   const [channels, setChannels] = useState([]);
   const [modal, setModal] = useState(false);
   const [channelName, setChannelName] = useState("");
@@ -33,6 +39,10 @@ const Channels = ({ user }) => {
     if (isFormValid()) {
       addChannel();
     }
+  };
+
+  const changeChannel = (channel) => {
+    setCurrentChannel(channel);
   };
 
   const addChannel = async () => {
@@ -69,8 +79,7 @@ const Channels = ({ user }) => {
           <span>
             <Icon name="exchange" /> Channels
           </span>{" "}
-          ({channels.length}){" "}
-          <Icon name="add" className="button" onClick={() => setModal(true)} />
+          ({channels.length}) <Icon name="add" onClick={() => setModal(true)} />
         </Menu.Item>
 
         {/* Channel List */}
@@ -78,11 +87,27 @@ const Channels = ({ user }) => {
           channels.map((ch) => (
             <Menu.Item
               key={ch.id}
-              onClick={() => console.log(ch)}
+              onClick={() => {
+                if (
+                  channel.currentChannel &&
+                  channel.currentChannel.id === ch.id
+                )
+                  return;
+                changeChannel(ch);
+              }}
               name={ch.Name}
               style={{ opacitiy: 0.7 }}
+              className={
+                channel.currentChannel && channel.currentChannel.id === ch.id
+                  ? "ui header blue"
+                  : "ui"
+              }
             >
               # {ch.name}
+              {channel.currentChannel &&
+                channel.currentChannel.id === ch.id && (
+                  <Icon name="remove" onClick={() => clearCurrentChannel()} />
+                )}
             </Menu.Item>
           ))}
       </Menu.Menu>
@@ -131,10 +156,17 @@ const Channels = ({ user }) => {
 };
 Channels.propTypes = {
   user: PropTypes.object,
+  channel: PropTypes.object,
+  setCurrentChannel: PropTypes.func,
+  clearCurrentChannel: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   user: state.user.currentUser,
+  channel: state.channel,
 });
 
-export default connect(mapStateToProps, {})(Channels);
+export default connect(mapStateToProps, {
+  setCurrentChannel,
+  clearCurrentChannel,
+})(Channels);
