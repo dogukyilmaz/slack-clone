@@ -3,7 +3,7 @@ import moment from "moment";
 import { Comment } from "semantic-ui-react";
 
 const isOwnMessage = (message, user) => {
-  return message.user.id === user.uid ? "message__self" : "";
+  return message && user && message.user.id === user.uid ? "message__self" : "";
 };
 
 const timeFrom = (tmstmp) => moment(tmstmp).fromNow();
