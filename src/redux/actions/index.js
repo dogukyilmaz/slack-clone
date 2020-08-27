@@ -22,6 +22,6 @@ export const setCurrentChannel = (ch) => {
 
 export const clearCurrentChannel = () => {
   return {
-    type: actionTypes.SET_CURRENT_CHANNEL,
+    type: actionTypes.CLEAR_CURRENT_CHANNEL,
   };
 };
