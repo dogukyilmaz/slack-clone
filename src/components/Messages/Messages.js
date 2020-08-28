@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Segment, Comment, Loader, Dimmer } from "semantic-ui-react";
+import { Segment, Comment } from "semantic-ui-react";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import firebase from "../../firebase";
@@ -24,24 +24,12 @@ const Messages = ({ channel, user }) => {
     messagesRef.off();
   }, [messagesRef]);
 
-  // const setMessagesFirstLoad = useCallback(() => {
-  //   if (loading && messages.length > 0) {
-  //     setMessages((messages) => [...messages]);
-  //     setLoading(false);
-  //   }
-  // }, [loading, messages.length]);
-
   useEffect(() => {
     if (channel && user) {
       addListeners();
     }
     return () => removeListener();
   }, [channel, user, addListeners, removeListener]);
-
-  // useEffect(() => {
-  //   setMessagesFirstLoad();
-  //   console.log("setted first load", messages);
-  // }, [messages, setMessagesFirstLoad]);
 
   return (
     <>
@@ -58,7 +46,7 @@ const Messages = ({ channel, user }) => {
           ) : (
             messages.length > 0 &&
             messages.map((msg, idx) => (
-              <Message key={msg.timestamp} message={msg} user={user} />
+              <Message key={idx} message={msg} user={user} /> //key msg.timestamp ?
             ))
           )}
         </Comment.Group>

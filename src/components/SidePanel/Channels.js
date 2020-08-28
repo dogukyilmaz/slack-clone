@@ -4,10 +4,23 @@ import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
 
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { setCurrentChannel, clearCurrentChannel } from "../../redux/actions";
+import {
+  setCurrentChannel,
+  clearCurrentChannel,
+  setAlert,
+  removeAlert,
+} from "../../redux/actions";
+import Spinner from "../Spinner";
 
 const Channels = memo(
-  ({ user, channel, setCurrentChannel, clearCurrentChannel }) => {
+  ({
+    user,
+    channel,
+    setCurrentChannel,
+    clearCurrentChannel,
+    setAlert,
+    removeAlert,
+  }) => {
     const [channels, setChannels] = useState([]);
     const [modal, setModal] = useState(false);
     const [firstLoad, setFirstLoad] = useState(true);
@@ -15,7 +28,7 @@ const Channels = memo(
     const [channelDetail, setChannelDetail] = useState("");
     const [channelsRef] = useState(firebase.database().ref("channels"));
 
-    const addListenerss = useCallback(() => {
+    const addListeners = useCallback(() => {
       channelsRef.on("child_added", (snap) => {
         setChannels((chs) => [...chs, snap.val()]);
       });
@@ -33,9 +46,9 @@ const Channels = memo(
     }, [channelsRef]);
 
     useEffect(() => {
-      addListenerss();
+      addListeners();
       return () => removeListener();
-    }, [addListenerss, removeListener]);
+    }, [addListeners, removeListener]);
 
     useEffect(() => {
       setFirstChannelOnFirstLoad();
@@ -70,11 +83,18 @@ const Channels = memo(
         setModal(false);
         setChannelName("");
         setChannelDetail("");
-        // TODO: ALERT
+        showAlert("Channel added succesfully.", "success");
       } catch (err) {
         console.log(err);
-        // TODO: ALERT
+        showAlert("Channel could not be added. Try again later.", "error");
       }
+    };
+
+    const showAlert = (message, type) => {
+      setAlert({ message, type });
+      setTimeout(() => {
+        removeAlert();
+      }, 3000);
     };
 
     const isFormValid = () => channelName && channelDetail;
@@ -91,7 +111,12 @@ const Channels = memo(
           </Menu.Item>
 
           {/* Channel List */}
-          {channels.length > 0 &&
+          {firstLoad ? (
+            <Menu.Item style={{ opacitiy: 0.7 }}>
+              <Spinner loadingMessage="" size="tiny" transparent />
+            </Menu.Item>
+          ) : (
+            channels.length > 0 &&
             channels.map((ch) => (
               <Menu.Item
                 key={ch.id}
@@ -117,7 +142,8 @@ const Channels = memo(
                     <Icon name="remove" onClick={() => clearCurrentChannel()} />
                   )}
               </Menu.Item>
-            ))}
+            ))
+          )}
         </Menu.Menu>
 
         <Modal
@@ -169,6 +195,8 @@ Channels.propTypes = {
   channel: PropTypes.object,
   setCurrentChannel: PropTypes.func,
   clearCurrentChannel: PropTypes.func,
+  setAlert: PropTypes.func,
+  removeAlert: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -179,4 +207,6 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   setCurrentChannel,
   clearCurrentChannel,
+  setAlert,
+  removeAlert,
 })(Channels);
