@@ -25,3 +25,16 @@ export const clearCurrentChannel = () => {
     type: actionTypes.CLEAR_CURRENT_CHANNEL,
   };
 };
+
+export const setAlert = (alert) => {
+  return {
+    type: actionTypes.SET_ALERT,
+    payload: alert,
+  };
+};
+
+export const removeAlert = () => {
+  return {
+    type: actionTypes.REMOVE_ALERT,
+  };
+};

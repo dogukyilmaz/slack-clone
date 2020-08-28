@@ -13,13 +13,11 @@ export const userReducer = (state = initialUserState, action) => {
         currentUser: payload,
         isLoading: false,
       };
-
     case actionTypes.CLEAR_USER:
       return {
         ...initialUserState,
         isLoading: false,
       };
-
     default:
       return state;
   }
@@ -43,7 +41,31 @@ export const channelReducer = (state = initialChannelState, action) => {
         ...state,
         currentChannel: null,
       };
+    default:
+      return state;
+  }
+};
 
+const initialAlertState = {
+  alertMessage: null,
+  type: null,
+};
+
+export const alertReducer = (state = initialAlertState, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case actionTypes.SET_ALERT:
+      return {
+        ...state,
+        alertMessage: payload.message,
+        type: payload.type,
+      };
+    case actionTypes.REMOVE_ALERT:
+      return {
+        ...state,
+        alertMessage: null,
+        type: null,
+      };
     default:
       return state;
   }
