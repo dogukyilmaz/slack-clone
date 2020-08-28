@@ -1,10 +1,14 @@
 import React from "react";
 import { Loader, Dimmer } from "semantic-ui-react";
 
-const Spinner = () => {
+const Spinner = ({
+  isInverted = false,
+  size = "medium",
+  loadingMessage = "Loading",
+}) => {
   return (
-    <Dimmer active>
-      <Loader size="massive" inverted content="Loading Chat..." />
+    <Dimmer active inverted={isInverted}>
+      <Loader size={size} content={loadingMessage} />
     </Dimmer>
   );
 };

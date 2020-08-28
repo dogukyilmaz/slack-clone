@@ -35,7 +35,7 @@ const Root = ({ history }) => {
   }, [history]);
 
   return isLoading ? (
-    <Spinner />
+    <Spinner loadingMessage="Loading Chat..." size="massive" />
   ) : (
     <Switch>
       <Route exact path="/" component={Landing} />
