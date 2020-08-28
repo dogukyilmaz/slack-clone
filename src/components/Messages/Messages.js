@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Segment, Comment } from "semantic-ui-react";
+import { Segment, Comment, Loader, Dimmer } from "semantic-ui-react";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import firebase from "../../firebase";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Message from "./Message";
+import Spinner from "../Spinner";
 
 const Messages = ({ channel, user }) => {
   const [messages, setMessages] = useState([]);
@@ -14,12 +15,12 @@ const Messages = ({ channel, user }) => {
 
   const addListeners = useCallback(() => {
     messagesRef.child(channel.id).on("child_added", (snap) => {
-      setMessages((messages) => [...messages, snap.val()]);
+      setMessages((messages) => [snap.val(), ...messages]);
+      setLoading(false);
     });
   }, [messagesRef, channel]);
 
   const removeListener = useCallback(() => {
-    console.log("removed listener");
     messagesRef.off();
   }, [messagesRef]);
 
@@ -32,7 +33,6 @@ const Messages = ({ channel, user }) => {
 
   useEffect(() => {
     if (channel && user) {
-      console.log("listener");
       addListeners();
     }
     return () => removeListener();
@@ -49,10 +49,18 @@ const Messages = ({ channel, user }) => {
       <Segment>
         <Comment.Group className="messages">
           {/* Messages */}
-          {messages.length > 0 &&
+          {loading ? (
+            <Spinner
+              isInverted={true}
+              size="medium"
+              loadingMessage="Loading Messages..."
+            />
+          ) : (
+            messages.length > 0 &&
             messages.map((msg, idx) => (
               <Message key={msg.timestamp} message={msg} user={user} />
-            ))}
+            ))
+          )}
         </Comment.Group>
       </Segment>
       <MessageForm messagesRef={messagesRef} channel={channel} user={user} />

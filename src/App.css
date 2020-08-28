@@ -15,6 +15,7 @@ body,
 .messages {
   height: 440px;
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 .messages__form {
