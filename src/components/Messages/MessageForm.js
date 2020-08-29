@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Segment, Input, Button } from "semantic-ui-react";
 import firebase from "../../firebase";
+import FileModal from "./FileModal";
 
 const MessageForm = ({ messagesRef, channel, user }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [modal, setModal] = useState(false);
 
   const sendMessage = async () => {
     if (message && message.trim().length > 0) {
@@ -37,7 +39,10 @@ const MessageForm = ({ messagesRef, channel, user }) => {
     };
   };
 
-  const uploadFile = () => {};
+  const uploadFile = (file, metadata) => {
+    console.log(file);
+    console.log(metadata);
+  };
 
   const addEmoji = () => {};
 
@@ -62,7 +67,7 @@ const MessageForm = ({ messagesRef, channel, user }) => {
           // content="Upload Media"
           // labelPosition="left"
           icon="cloud upload"
-          onClick={uploadFile}
+          onClick={() => setModal(true)}
         />
         <Button
           color="orange"
@@ -72,6 +77,11 @@ const MessageForm = ({ messagesRef, channel, user }) => {
           disabled={loading}
           loading={loading}
           onClick={sendMessage}
+        />
+        <FileModal
+          modal={modal}
+          closeModal={() => setModal(false)}
+          uploadFile={uploadFile}
         />
       </Button.Group>
     </Segment>
