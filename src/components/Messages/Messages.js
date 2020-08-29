@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { Segment, Comment } from "semantic-ui-react";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
@@ -8,16 +8,21 @@ import { connect } from "react-redux";
 import Message from "./Message";
 import Spinner from "../Spinner";
 
-const Messages = ({ channel, user }) => {
+const Messages = memo(({ channel, user }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [messagesRef] = useState(firebase.database().ref("messages"));
 
+  // FIXME: renders much
+
   const addListeners = useCallback(() => {
-    messagesRef.child(channel.id).on("child_added", (snap) => {
-      setMessages((messages) => [snap.val(), ...messages]);
-      setLoading(false);
-    });
+    setMessages([]);
+    if (channel) {
+      messagesRef.child(channel.id).on("child_added", (snap) => {
+        setMessages((messages) => [snap.val(), ...messages]);
+        setLoading(false);
+      });
+    }
   }, [messagesRef, channel]);
 
   const removeListener = useCallback(() => {
@@ -54,7 +59,7 @@ const Messages = ({ channel, user }) => {
       <MessageForm messagesRef={messagesRef} channel={channel} user={user} />
     </>
   );
-};
+});
 
 Messages.propTypes = {
   channel: PropTypes.object,
