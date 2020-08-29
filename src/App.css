@@ -36,5 +36,5 @@ body,
   position: fixed !important;
   width: 22%;
   text-align: center;
-  z-index: 500;
+  z-index: 9999 !important;
 }
