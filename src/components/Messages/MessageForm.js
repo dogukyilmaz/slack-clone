@@ -3,6 +3,7 @@ import { Segment, Input, Button } from "semantic-ui-react";
 import { v4 } from "uuid";
 import firebase from "../../firebase";
 import FileModal from "./FileModal";
+import ProgressBar from "./ProgressBar";
 
 const MessageForm = ({ messagesRef, channel, user }) => {
   const [message, setMessage] = useState("");
@@ -81,9 +82,11 @@ const MessageForm = ({ messagesRef, channel, user }) => {
         // switch (snapshot.state) {
         //   case firebase.storage.TaskState.PAUSED: // or 'paused'
         //     console.log("Upload is paused");
+        //     setUploadState('paused');
         //     break;
         //   case firebase.storage.TaskState.RUNNING: // or 'running'
         //     console.log("Upload is running");
+        //     setUploadState('uploading');
         //     break;
         //   default:
         //     return;
@@ -93,7 +96,6 @@ const MessageForm = ({ messagesRef, channel, user }) => {
         // Handle unsuccessful uploads
         setError(error);
         console.log(error, "2");
-
         setUploadState("error");
       },
       () => {
@@ -119,6 +121,10 @@ const MessageForm = ({ messagesRef, channel, user }) => {
 
   return (
     <Segment className="message__form" clearing>
+      <ProgressBar
+        uploadState={uploadState}
+        uploadPercentage={uploadPercentage}
+      />
       <Input
         fluid
         name="message"
@@ -149,12 +155,12 @@ const MessageForm = ({ messagesRef, channel, user }) => {
           loading={loading}
           onClick={sendMessage}
         />
-        <FileModal
-          modal={modal}
-          closeModal={() => setModal(false)}
-          uploadFile={uploadFile}
-        />
       </Button.Group>
+      <FileModal
+        modal={modal}
+        closeModal={() => setModal(false)}
+        uploadFile={uploadFile}
+      />
     </Segment>
   );
 };

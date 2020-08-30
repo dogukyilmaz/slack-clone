@@ -42,3 +42,7 @@ body,
   text-align: center;
   z-index: 9999 !important;
 }
+
+.progress__bar {
+  margin: 0 0 1em 0 !important;
+}
