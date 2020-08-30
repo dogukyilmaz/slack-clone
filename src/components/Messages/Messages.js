@@ -20,8 +20,8 @@ const Messages = memo(({ channel, user }) => {
     if (channel) {
       messagesRef.child(channel.id).on("child_added", (snap) => {
         setMessages((messages) => [snap.val(), ...messages]);
-        setLoading(false);
       });
+      setLoading(false);
     }
   }, [messagesRef, channel]);
 
