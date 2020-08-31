@@ -12,18 +12,32 @@ const Messages = memo(({ channel, user }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [messagesRef] = useState(firebase.database().ref("messages"));
+  const [uniqueUsers, setUniqueUsers] = useState([]);
 
   // FIXME: renders much
+
+  const countUniqueUsers = useCallback(
+    (val) => {
+      if (channel) {
+        const uid = val.user.id;
+        if (!uniqueUsers.includes(uid)) {
+          setUniqueUsers([...uniqueUsers, uid]);
+        }
+      }
+    },
+    [uniqueUsers, channel]
+  );
 
   const addListeners = useCallback(() => {
     setMessages([]);
     if (channel) {
       messagesRef.child(channel.id).on("child_added", (snap) => {
         setMessages((messages) => [snap.val(), ...messages]);
+        countUniqueUsers(snap.val());
       });
       setLoading(false);
     }
-  }, [messagesRef, channel]);
+  }, [messagesRef, channel, countUniqueUsers]);
 
   const removeListener = useCallback(() => {
     messagesRef.off();
@@ -36,9 +50,13 @@ const Messages = memo(({ channel, user }) => {
     return () => removeListener();
   }, [channel, user, addListeners, removeListener]);
 
+  useEffect(() => {
+    setUniqueUsers([]);
+  }, [channel]);
+
   return (
     <>
-      <MessagesHeader />
+      <MessagesHeader channel={channel} users={uniqueUsers} />
       <Segment>
         <Comment.Group className="messages">
           {/* Messages */}
