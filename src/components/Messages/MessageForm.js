@@ -12,7 +12,6 @@ const MessageForm = ({ messagesRef, channel, user }) => {
   const [modal, setModal] = useState(false);
   const [storageRef] = useState(firebase.storage().ref());
   const [uploadState, setUploadState] = useState("");
-  // const [uploadTask, setUploadTask] = useState(null);
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
   const sendMessage = async () => {
@@ -60,7 +59,6 @@ const MessageForm = ({ messagesRef, channel, user }) => {
       })
       .catch((err) => {
         setError(err);
-        console.log(err, "1");
       });
   };
 
@@ -95,7 +93,6 @@ const MessageForm = ({ messagesRef, channel, user }) => {
       (error) => {
         // Handle unsuccessful uploads
         setError(error);
-        console.log(error, "2");
         setUploadState("error");
       },
       () => {
@@ -103,14 +100,10 @@ const MessageForm = ({ messagesRef, channel, user }) => {
         uploadTask.snapshot.ref
           .getDownloadURL()
           .then((downloadURL) => {
-            console.log(downloadURL);
-            console.log(messagesRef);
-            console.log(filePath);
             sendFileMessage(downloadURL, messagesRef, channel.id);
           })
           .catch((err) => {
             setError(err);
-            console.log(err, "3");
             setUploadState("error");
           });
       }
@@ -144,6 +137,7 @@ const MessageForm = ({ messagesRef, channel, user }) => {
           // content="Upload Media"
           // labelPosition="left"
           icon="cloud upload"
+          disabled={uploadState === "uploading"}
           onClick={() => setModal(true)}
         />
         <Button
