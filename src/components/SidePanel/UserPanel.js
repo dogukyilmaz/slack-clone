@@ -1,7 +1,5 @@
 import React from "react";
 import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
-import { connect } from "react-redux";
-import { clearUser } from "../../redux/actions";
 import PropTypes from "prop-types";
 import firebase from "../../firebase";
 
@@ -70,8 +68,4 @@ UserPanel.propTypes = {
   user: PropTypes.object,
 };
 
-const mapStateToProps = (state) => ({
-  user: state.user.currentUser,
-});
-
-export default connect(mapStateToProps, { clearUser })(UserPanel);
+export default UserPanel;
