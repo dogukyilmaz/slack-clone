@@ -13,6 +13,11 @@ const Messages = memo(({ channel, user }) => {
   const [loading, setLoading] = useState(true);
   const [messagesRef] = useState(firebase.database().ref("messages"));
   const [uniqueUsers, setUniqueUsers] = useState([]);
+  const [filterState, setFilterState] = useState({
+    searchTerm: "",
+    searchLoading: false,
+    searchResults: [],
+  });
 
   // FIXME: renders much
 
@@ -54,9 +59,55 @@ const Messages = memo(({ channel, user }) => {
     setUniqueUsers([]);
   }, [channel]);
 
+  const handleSearch = (e) => {
+    setFilterState({
+      ...filterState,
+      searchTerm: e.target.value,
+      searchLoading: true,
+    });
+  };
+
+  useEffect(() => {
+    const allMessages = [...messages];
+    const regex = new RegExp(
+      filterState.searchTerm && filterState.searchTerm,
+      "gi"
+    );
+    const res = allMessages.reduce((acc, msg) => {
+      if (
+        (msg.content && msg.content.match(regex)) ||
+        msg.user.name.match(regex)
+      ) {
+        acc.push(msg);
+      }
+      return acc;
+    }, []);
+
+    setFilterState({
+      ...filterState,
+      searchResults: res,
+      searchLoading: false,
+    });
+    // eslint-disable-next-line
+  }, [filterState.searchTerm, messages]);
+
+  const displayMessages = (messages) => {
+    return (
+      messages.length > 0 &&
+      messages.map((msg, idx) => (
+        <Message key={idx} message={msg} user={user} /> //key msg.timestamp ?
+      ))
+    );
+  };
+
   return (
     <>
-      <MessagesHeader channel={channel} users={uniqueUsers} />
+      <MessagesHeader
+        channel={channel}
+        users={uniqueUsers}
+        handleSearch={handleSearch}
+        loading={filterState.searchLoading}
+      />
       <Segment>
         <Comment.Group className="messages">
           {/* Messages */}
@@ -66,11 +117,10 @@ const Messages = memo(({ channel, user }) => {
               size="medium"
               loadingMessage="Loading Messages..."
             />
+          ) : filterState.searchTerm ? (
+            displayMessages(filterState.searchResults)
           ) : (
-            messages.length > 0 &&
-            messages.map((msg, idx) => (
-              <Message key={idx} message={msg} user={user} /> //key msg.timestamp ?
-            ))
+            displayMessages(messages)
           )}
         </Comment.Group>
       </Segment>

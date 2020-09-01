@@ -9,7 +9,7 @@ const displayChannelName = (channel) =>
     <Spinner isInverted loadingMessage="" size="small" />
   );
 
-const MessagesHeader = ({ channel, users }) => {
+const MessagesHeader = ({ channel, users, handleSearch, loading }) => {
   return (
     <Segment clearing>
       {/* Channel Title */}
@@ -25,6 +25,8 @@ const MessagesHeader = ({ channel, users }) => {
       {/* Channel Search */}
       <Header floated="right">
         <Input
+          loading={loading}
+          onChange={handleSearch}
           size="mini"
           icon="search"
           name="searchTerm"
