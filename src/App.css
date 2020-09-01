@@ -46,3 +46,7 @@ body,
 .progress__bar {
   margin: 0 0 1em 0 !important;
 }
+
+.menu {
+  padding-bottom: 2em;
+}
